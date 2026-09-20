@@ -7,7 +7,7 @@ import { useTheme, THEMES } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
 // Styles
-import './layout.css';
+import './Layout.css';
 
 const links = [
   { to: '/', label: 'Inicio', end: true },

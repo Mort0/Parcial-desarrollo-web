@@ -7,7 +7,7 @@ import { Footer } from './Footer';
 import { CartDrawer } from './CartDrawer';
 
 // Styles
-import './layout.css';
+import './Layout.css';
 
 export function Layout() {
   return (

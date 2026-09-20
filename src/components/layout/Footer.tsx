@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useInformation } from '../../context/InformationContext';
 
 // Styles
-import './layout.css';
+import './Layout.css';
 
 const col1 = [
   { to: '/productos', label: 'Productos' },
