@@ -1,5 +1,5 @@
 // Libraries
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
@@ -25,8 +25,7 @@ export default function App() {
     <AlertProvider>
       <AuthProvider>
         <CartProvider>
-          <BrowserRouter>
-            <Routes>
+          <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
@@ -45,7 +44,6 @@ export default function App() {
                 </Route>
               </Route>
             </Routes>
-          </BrowserRouter>
         </CartProvider>
       </AuthProvider>
     </AlertProvider>
