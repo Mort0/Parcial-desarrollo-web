@@ -560,6 +560,25 @@
   color: var(--color-muted);
 }
 
+.info-block {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+}
+
+.info-meta {
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  margin-bottom: 0.3rem;
+}
+
+.table__detail {
+  max-width: 280px;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
 /* Responsive — páginas */
 @media (max-width: 640px) {
   .form-grid {

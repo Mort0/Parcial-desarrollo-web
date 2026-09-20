@@ -5,6 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { AlertProvider } from './context/AlertContext';
+import { InformationProvider } from './context/InformationContext';
 
 // Components
 import { Layout } from './components/layout/Layout';
@@ -25,6 +26,7 @@ export default function App() {
     <AlertProvider>
       <AuthProvider>
         <CartProvider>
+          <InformationProvider>
           <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<LoginPage />} />
@@ -44,6 +46,7 @@ export default function App() {
                 </Route>
               </Route>
             </Routes>
+          </InformationProvider>
         </CartProvider>
       </AuthProvider>
     </AlertProvider>

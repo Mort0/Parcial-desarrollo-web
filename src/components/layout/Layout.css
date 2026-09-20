@@ -78,9 +78,56 @@
 }
 
 .app-header__greeting {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
   white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.app-header__user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-header__session {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.app-header__username {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.app-header__role {
+  font-size: 0.6rem;
+  background: var(--color-header-border);
+  color: var(--color-header-start);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.app-header button.app-header__logout {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0;
+  text-align: right;
+  line-height: 1.2;
+  display: block;
+}
+
+.app-header__logout:hover {
+  color: #ff5a5f;
 }
 
 .app-header__avatar {
@@ -404,7 +451,24 @@
   font-size: 0.88rem;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.55);
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.ft__institutional .ft__heading {
+  margin-bottom: 0.4rem;
+}
+
+.ft__contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.ft__contact-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .ft__tag {
@@ -488,6 +552,7 @@ ul.ft__list li {
 }
 
 .ft__ct {
+  display: block;
   font-size: 0.86rem;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
@@ -551,11 +616,22 @@ ul.ft__list li {
 
 @media (max-width: 640px) {
   .app-header__name {
-    font-size: 1.1rem;
+    display: none;
   }
-  .app-header__greeting,
+  .app-header__session,
+  .app-header__greeting {
+    display: flex;
+    font-size: 0.75rem;
+  }
+  .app-header__logout {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
   .app-header__divider {
     display: none;
+  }
+  .app-header__right {
+    gap: 0.45rem;
   }
   .app-header__hamburger {
     display: flex;

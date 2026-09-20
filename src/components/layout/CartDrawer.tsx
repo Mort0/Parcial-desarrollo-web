@@ -1,21 +1,31 @@
 // Libraries
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Context
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { useAlert } from '../../context/AlertContext';
 
 // Repositories
-import { clienteRepository } from '../../respositories/cliente.repository';
 import { ordenRepository } from '../../respositories/orden.repository';
-
-// Interfaces
-import type { Cliente } from '../../interfaces';
 
 // Utils
 import { getProductFallbackImage } from '../../utils/productImage';
+import { buildOrderDetalle } from '../../utils/orderDetail';
 
 // Styles
 import './cart.css';
+
+interface OrderSummary {
+  id: string;
+  fecha: string;
+  total: number;
+  estado: string;
+  comprador: string;
+  detalle: string;
+  items: { nombre: string; quantity: number; precio: number }[];
+}
 
 export function CartDrawer() {
   const {
@@ -27,52 +37,63 @@ export function CartDrawer() {
     clearCart,
     cartTotal,
   } = useCart();
+  const { user } = useAuth();
+  const { showToast } = useAlert();
+  const navigate = useNavigate();
 
-  const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [selectedClienteId, setSelectedClienteId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [metodoPago, setMetodoPago] = useState('Tarjeta');
+  const [summary, setSummary] = useState<OrderSummary | null>(null);
 
   useEffect(() => {
-    if (isCartOpen && clientes.length === 0) {
-      clienteRepository
-        .getAll()
-        .then((data) => {
-          setClientes(data);
-          if (data.length > 0) setSelectedClienteId(data[0].id);
-        })
-        .catch(console.error);
-    }
-  }, [isCartOpen, clientes.length]);
+    if (cart.length > 0) setSummary(null);
+  }, [cart.length]);
+
+  const handleClose = () => {
+    if (isCartOpen) toggleCart();
+  };
 
   const handleCheckout = async () => {
-    if (!selectedClienteId || cart.length === 0) return;
+    if (!user) {
+      showToast('Debes iniciar sesión para finalizar la compra', 'error');
+      return;
+    }
+    if (cart.length === 0) return;
+
     setLoading(true);
-
     try {
-      const clienteInfo = clientes.find((c) => c.id === selectedClienteId);
-      const clienteNombre = clienteInfo
-        ? clienteInfo.nombre
-        : 'Cliente Desconocido';
+      const detalle = buildOrderDetalle(cart);
+      const fecha = new Date().toISOString().slice(0, 10);
+      const items = cart.map((item) => ({
+        nombre: item.producto.nombre,
+        quantity: item.quantity,
+        precio: item.producto.precio,
+      }));
 
-      const detalle = cart
-        .map((item) => `${item.quantity}x ${item.producto.nombre}`)
-        .join(', ');
-
-      await ordenRepository.create({
-        cliente: clienteNombre,
-        fecha: new Date().toISOString().split('T')[0],
-        metodo_pago: 'Tarjeta',
+      const orden = await ordenRepository.create({
+        cliente: user.nombre,
+        usuarioId: user.id,
+        fecha,
+        metodo_pago: metodoPago,
         total: cartTotal,
         descuento: 0,
-        detalle: detalle,
+        detalle,
         estado_orden: 'Pendiente',
       });
 
-      alert('¡Orden creada exitosamente!');
+      setSummary({
+        id: orden.id,
+        fecha,
+        total: cartTotal,
+        estado: 'Pendiente',
+        comprador: user.nombre,
+        detalle,
+        items,
+      });
       clearCart();
-      toggleCart();
+      showToast('Pedido confirmado. Revisa el resumen de tu orden.', 'success');
     } catch (error) {
-      alert('Error al crear la orden');
+      showToast('Error al crear la orden', 'error');
       console.error(error);
     } finally {
       setLoading(false);
@@ -80,19 +101,38 @@ export function CartDrawer() {
   };
 
   return (
-    <div className={`cart-overlay ${isCartOpen ? 'is-open' : ''}`}>
+    <div
+      className={`cart-overlay ${isCartOpen ? 'is-open' : ''}`}
+      onClick={handleClose}
+    >
       <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
         <div className="cart-header">
-          <h2>🛒 Tu Carrito</h2>
-          <button className="cart-close-btn" onClick={toggleCart}>
+          <h2>{summary ? 'Pedido confirmado' : 'Tu Carrito'}</h2>
+          <button className="cart-close-btn" onClick={handleClose}>
             ✕
           </button>
         </div>
 
         <div className="cart-body">
-          {cart.length === 0 ? (
+          {summary ? (
+            <div className="cart-summary">
+              <p className="cart-summary__badge">Orden #{summary.id}</p>
+              <p className="cart-summary__meta">
+                Comprador: <strong>{summary.comprador}</strong>
+              </p>
+              <p className="cart-summary__meta">Fecha: {summary.fecha}</p>
+              <p className="cart-summary__meta">Estado: {summary.estado}</p>
+              <ul className="cart-summary__items">
+                {summary.items.map((item) => (
+                  <li key={item.nombre}>
+                    {item.nombre} × {item.quantity} — $
+                    {(item.precio * item.quantity).toFixed(2)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : cart.length === 0 ? (
             <div className="cart-empty">
-              <span className="cart-empty-icon">🛍️</span>
               <p>Tu carrito está vacío</p>
             </div>
           ) : (
@@ -155,29 +195,49 @@ export function CartDrawer() {
           )}
         </div>
 
-        {cart.length > 0 && (
+        {summary && (
+          <div className="cart-footer">
+            <div className="cart-total-row">
+              <span>Total pagado:</span>
+              <span>${summary.total.toFixed(2)}</span>
+            </div>
+            <button
+              className="cart-checkout-btn"
+              onClick={() => {
+                handleClose();
+                navigate('/ordenes');
+              }}
+            >
+              Ver historial de pedidos
+            </button>
+            <button
+              className="cart-secondary-btn"
+              onClick={() => {
+                setSummary(null);
+                handleClose();
+              }}
+            >
+              Seguir comprando
+            </button>
+          </div>
+        )}
+
+        {!summary && cart.length > 0 && (
           <div className="cart-footer">
             <div className="cart-checkout-form">
-              <label
-                htmlFor="cliente-select"
-                style={{ fontSize: '0.85rem', color: 'var(--color-muted)' }}
-              >
-                Cliente para la orden:
-              </label>
+              <p className="cart-buyer">
+                Compra a nombre de <strong>{user?.nombre}</strong>
+              </p>
+              <label htmlFor="metodo-pago">Método de pago</label>
               <select
-                id="cliente-select"
-                value={selectedClienteId}
-                onChange={(e) => setSelectedClienteId(e.target.value)}
+                id="metodo-pago"
+                value={metodoPago}
+                onChange={(e) => setMetodoPago(e.target.value)}
                 disabled={loading}
               >
-                <option value="" disabled>
-                  Seleccione un cliente...
-                </option>
-                {clientes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nombre}
-                  </option>
-                ))}
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia</option>
               </select>
             </div>
 
@@ -189,9 +249,9 @@ export function CartDrawer() {
             <button
               className="cart-checkout-btn"
               onClick={handleCheckout}
-              disabled={loading || !selectedClienteId}
+              disabled={loading}
             >
-              {loading ? 'Procesando...' : 'Crear Orden'}
+              {loading ? 'Procesando...' : 'Finalizar compra'}
             </button>
           </div>
         )}

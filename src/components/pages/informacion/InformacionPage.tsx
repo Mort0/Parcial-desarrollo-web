@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 // Context
 import { useAuth } from '../../../context/AuthContext';
 import { useAlert } from '../../../context/AlertContext';
+import { useInformation } from '../../../context/InformationContext';
 
 // Interfaces
 import type { Information } from '../../../interfaces';
@@ -19,12 +20,25 @@ const VACIO: Omit<Information, 'id'> = {
   telefono: '',
   direccion: '',
   horario: '',
+  mision: '',
+  vision: '',
 };
+
+function toForm(info: Information): Omit<Information, 'id'> {
+  return {
+    nombre: info.nombre || '',
+    telefono: info.telefono || '',
+    direccion: info.direccion || '',
+    horario: info.horario || '',
+    mision: info.mision || '',
+    vision: info.vision || '',
+  };
+}
 
 export function InformacionPage() {
   const { isAdmin } = useAuth();
   const { showToast, showConfirm } = useAlert();
-  const [registros, setRegistros] = useState<Information[]>([]);
+  const { registros, reload } = useInformation();
   const [form, setForm] = useState<Omit<Information, 'id'>>(VACIO);
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -32,8 +46,7 @@ export function InformacionPage() {
   async function cargar() {
     try {
       setCargando(true);
-      const data = await informationRepository.getAll();
-      setRegistros(data);
+      await reload();
     } catch (e) {
       showToast(e instanceof Error ? e.message : 'Error al cargar', 'error');
     } finally {
@@ -63,9 +76,8 @@ export function InformacionPage() {
   }
 
   function handleEditar(info: Information) {
-    const { id, ...rest } = info;
-    setForm(rest);
-    setEditandoId(id);
+    setForm(toForm(info));
+    setEditandoId(info.id);
   }
 
   function handleEliminar(id: string) {
@@ -79,9 +91,12 @@ export function InformacionPage() {
           await cargar();
           showToast('Registro eliminado exitosamente', 'success');
         } catch (e) {
-          showToast(e instanceof Error ? e.message : 'Error al eliminar', 'error');
+          showToast(
+            e instanceof Error ? e.message : 'Error al eliminar',
+            'error',
+          );
         }
-      }
+      },
     });
   }
 
@@ -93,13 +108,13 @@ export function InformacionPage() {
   return (
     <div className="page">
       <header className="page__header">
-        <h1>Información</h1>
+        <h1>Información institucional</h1>
         <p className="page__subtitle">
-          Datos de contacto y horarios de la tienda
+          Misión, visión, contacto y datos de la empresa cargados desde el Mock
+          API
         </p>
       </header>
 
-      {/* Tarjetas de info actuales */}
       {!cargando && registros.length > 0 && (
         <div
           style={{
@@ -129,32 +144,20 @@ export function InformacionPage() {
               >
                 {info.nombre}
               </p>
-              <p
-                style={{
-                  fontSize: '0.88rem',
-                  color: 'var(--color-muted)',
-                  marginBottom: '0.3rem',
-                }}
-              >
-                📞 {info.telefono || '—'}
-              </p>
-              <p
-                style={{
-                  fontSize: '0.88rem',
-                  color: 'var(--color-muted)',
-                  marginBottom: '0.3rem',
-                }}
-              >
-                📍 {info.direccion || '—'}
-              </p>
-              <p
-                style={{
-                  fontSize: '0.88rem',
-                  color: 'var(--color-muted)',
-                  marginBottom: '0.75rem',
-                }}
-              >
-                🕐 {info.horario || '—'}
+              {info.mision && (
+                <p className="info-block">
+                  <strong>Misión.</strong> {info.mision}
+                </p>
+              )}
+              {info.vision && (
+                <p className="info-block">
+                  <strong>Visión.</strong> {info.vision}
+                </p>
+              )}
+              <p className="info-meta">{info.telefono || '—'}</p>
+              <p className="info-meta">{info.direccion || '—'}</p>
+              <p className="info-meta" style={{ marginBottom: '0.75rem' }}>
+                {info.horario || '—'}
               </p>
               <div style={{ display: 'flex', gap: '0.4rem' }}>
                 {isAdmin && (
@@ -179,7 +182,6 @@ export function InformacionPage() {
         </div>
       )}
 
-      {/* Formulario */}
       {isAdmin && (
         <section className="card">
           <h2 className="card__title">
@@ -226,6 +228,26 @@ export function InformacionPage() {
               />
             </label>
 
+            <label className="field" style={{ gridColumn: '1 / -1' }}>
+              <span>Misión</span>
+              <textarea
+                rows={3}
+                value={form.mision}
+                onChange={(e) => setForm({ ...form, mision: e.target.value })}
+                placeholder="Misión de la empresa"
+              />
+            </label>
+
+            <label className="field" style={{ gridColumn: '1 / -1' }}>
+              <span>Visión</span>
+              <textarea
+                rows={3}
+                value={form.vision}
+                onChange={(e) => setForm({ ...form, vision: e.target.value })}
+                placeholder="Visión de la empresa"
+              />
+            </label>
+
             <div className="form-actions">
               <button type="submit" className="btn btn--primary">
                 {editandoId ? 'Actualizar' : 'Guardar'}
@@ -247,7 +269,6 @@ export function InformacionPage() {
       {cargando && <p className="muted">Cargando...</p>}
       {!cargando && registros.length === 0 && (
         <div className="empty-state">
-          <span style={{ fontSize: '2.5rem' }}>ℹ️</span>
           <p>No hay información registrada. Agrega los datos de la tienda.</p>
         </div>
       )}

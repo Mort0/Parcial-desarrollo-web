@@ -273,7 +273,13 @@ export function ProductosPage() {
                       >
                         <button
                           className="btn btn--sm btn--primary"
-                          onClick={() => addToCart(p)}
+                          onClick={() => {
+                            addToCart(p);
+                            showToast(
+                              `${p.nombre} añadido al carrito`,
+                              'success',
+                            );
+                          }}
                         >
                           + Carrito
                         </button>

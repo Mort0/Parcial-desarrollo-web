@@ -1,6 +1,9 @@
 // Libraries
 import { Link } from 'react-router-dom';
 
+// Context
+import { useInformation } from '../../context/InformationContext';
+
 // Styles
 import './layout.css';
 
@@ -19,25 +22,43 @@ const col2 = [
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const { empresa, registros, loading } = useInformation();
+
+  const nombre = empresa?.nombre || 'Unholy Store';
+  const mision = empresa?.mision;
+  const vision = empresa?.vision;
+  const contactos = registros.filter(
+    (item) => item.telefono || item.direccion || item.horario,
+  );
 
   return (
     <footer className="ft">
       <div className="ft__body container">
-        {/* Marca */}
         <div className="ft__brand">
           <div className="ft__logo-row">
-            <span className="ft__logo">U</span>
-            <span className="ft__name">Unholy Store</span>
+            <span className="ft__logo">{nombre.charAt(0).toUpperCase()}</span>
+            <span className="ft__name">{nombre}</span>
           </div>
-          <p className="ft__desc">
-            Moda urbana con identidad propia.
-            <br />
-            Ropa diseñada para quienes se atreven.
-          </p>
-          <span className="ft__tag">Moda Urbana · Colombia</span>
+          {loading ? (
+            <p className="ft__desc">Cargando información institucional...</p>
+          ) : (
+            <>
+              {mision && (
+                <div className="ft__institutional">
+                  <p className="ft__heading">Misión</p>
+                  <p className="ft__desc">{mision}</p>
+                </div>
+              )}
+              {vision && (
+                <div className="ft__institutional">
+                  <p className="ft__heading">Visión</p>
+                  <p className="ft__desc">{vision}</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
-        {/* Tienda */}
         <div className="ft__col">
           <p className="ft__heading">Tienda</p>
           <ul className="ft__list">
@@ -51,7 +72,6 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Admin */}
         <div className="ft__col">
           <p className="ft__heading">Administración</p>
           <ul className="ft__list">
@@ -65,44 +85,38 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Contacto */}
         <div className="ft__col">
           <p className="ft__heading">Contacto</p>
           <ul className="ft__list">
-            <li className="ft__contact">
-              <span className="ft__ci">📞</span>
-              <span className="ft__ct">+57 300 123 4567</span>
-            </li>
-            <li className="ft__contact">
-              <span className="ft__ci">📍</span>
-              <span className="ft__ct">Calle 123 #45-67, Medellín</span>
-            </li>
-            <li className="ft__contact">
-              <span className="ft__ci">🕐</span>
-              <span className="ft__ct">Lun – Sáb: 9am – 7pm</span>
-            </li>
-            <li className="ft__contact">
-              <span className="ft__ci">🌞</span>
-              <span className="ft__ct">Dom: 10am – 4pm</span>
-            </li>
+            {contactos.length === 0 && !loading && (
+              <li className="ft__contact">
+                <span className="ft__ct">Sin datos de contacto</span>
+              </li>
+            )}
+            {contactos.map((info) => (
+              <li key={info.id} className="ft__contact-block">
+                <span className="ft__contact-name">{info.nombre}</span>
+                {info.telefono && (
+                  <span className="ft__ct">{info.telefono}</span>
+                )}
+                {info.direccion && (
+                  <span className="ft__ct">{info.direccion}</span>
+                )}
+                {info.horario && <span className="ft__ct">{info.horario}</span>}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
 
       <div className="ft__bar container">
         <p className="ft__copy">
-          © {year} Unholy Store. Todos los derechos reservados.
+          © {year} {nombre}. Todos los derechos reservados.
         </p>
         <div className="ft__legal">
-          <a href="#" className="ft__legal-lnk">
-            Privacidad
-          </a>
-          <a href="#" className="ft__legal-lnk">
-            Términos
-          </a>
-          <a href="#" className="ft__legal-lnk">
-            Cookies
-          </a>
+          <Link to="/informacion" className="ft__legal-lnk">
+            Información institucional
+          </Link>
         </div>
       </div>
     </footer>

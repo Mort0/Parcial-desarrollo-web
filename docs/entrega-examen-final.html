@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Evaluación Final — Desarrollo Web — Unholy Store</title>
+    <style>
+      @page {
+        size: letter;
+        margin: 16mm 17mm 18mm 17mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        color: #1c1c1c;
+        background: #fff;
+        font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 11pt;
+        line-height: 1.45;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+        font-weight: 700;
+        color: #143528;
+        line-height: 1.2;
+      }
+
+      h1 {
+        font-size: 26pt;
+        margin: 0 0 8px;
+      }
+
+      h2 {
+        font-size: 15pt;
+        margin: 0 0 10px;
+        padding-bottom: 4px;
+        border-bottom: 1.5px solid #1e5c3a;
+      }
+
+      h3 {
+        font-size: 12pt;
+        margin: 14px 0 6px;
+        color: #1e5c3a;
+      }
+
+      p {
+        margin: 0 0 9px;
+        text-align: justify;
+      }
+
+      a {
+        color: #1e5c3a;
+        text-decoration: none;
+      }
+
+      .cover {
+        min-height: 240mm;
+        display: flex;
+        flex-direction: column;
+        page-break-after: always;
+      }
+
+      .brand-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 4px solid #1e5c3a;
+        padding-bottom: 10px;
+      }
+
+      .brand-bar small {
+        display: block;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-size: 8pt;
+        color: #5f6b64;
+      }
+
+      .brand-bar strong {
+        display: block;
+        font-size: 12.5pt;
+        color: #143528;
+        margin-top: 2px;
+      }
+
+      .cover-kicker {
+        margin-top: 42px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-size: 9pt;
+        color: #1e5c3a;
+        font-weight: 600;
+      }
+
+      .cover h1 {
+        margin-top: 8px;
+        font-size: 34pt;
+      }
+
+      .cover .subtitle {
+        font-size: 13.5pt;
+        color: #3d4a43;
+        margin: 0 0 28px;
+      }
+
+      .meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 28px;
+        margin: 8px 0 28px;
+        font-size: 10.5pt;
+      }
+
+      .meta-grid span {
+        display: block;
+        font-size: 8pt;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #6a756e;
+      }
+
+      .meta-grid b {
+        display: block;
+        margin-top: 2px;
+        font-weight: 600;
+      }
+
+      .member {
+        border: 1px solid #d7ddd8;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+      }
+
+      .member:nth-child(even) {
+        background: #f4f7f4;
+      }
+
+      .member strong {
+        display: block;
+        font-size: 12pt;
+        color: #143528;
+        margin-bottom: 4px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10.5pt;
+      }
+
+      th {
+        text-align: left;
+        font-size: 8pt;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #fff;
+        background: #1e5c3a;
+        padding: 8px 10px;
+      }
+
+      td {
+        padding: 9px 10px;
+        border-bottom: 1px solid #d7ddd8;
+        vertical-align: top;
+      }
+
+      tr:nth-child(even) td {
+        background: #f4f7f4;
+      }
+
+      .cover-foot {
+        margin-top: auto;
+        border-top: 1px solid #cfd6d1;
+        padding-top: 10px;
+        font-size: 9.5pt;
+        color: #5c6760;
+      }
+
+      .section {
+        page-break-inside: avoid;
+        margin-bottom: 18px;
+      }
+
+      .layers {
+        display: grid;
+        gap: 6px;
+        margin: 10px 0 14px;
+      }
+
+      .layer {
+        border: 1px solid #c5d0c7;
+        padding: 8px 12px;
+        background: #f7faf7;
+      }
+
+      .layer b {
+        display: block;
+        font-size: 9pt;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #1e5c3a;
+        margin-bottom: 2px;
+      }
+
+      .layer span {
+        font-size: 10pt;
+        color: #2b3330;
+      }
+
+      ul {
+        margin: 6px 0 10px 18px;
+        padding: 0;
+      }
+
+      li {
+        margin: 0 0 5px;
+      }
+
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .box {
+        border-left: 3px solid #1e5c3a;
+        padding: 2px 0 2px 12px;
+      }
+
+      .note {
+        font-size: 9.5pt;
+        color: #4d5852;
+        margin-top: 10px;
+      }
+
+      .page {
+        page-break-after: always;
+      }
+
+      .page:last-child {
+        page-break-after: auto;
+      }
+
+      .repo-name {
+        font-weight: 600;
+        color: #143528;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="cover">
+      <div class="brand-bar">
+        <div>
+          <small>Institución universitaria</small>
+          <strong>Tecnológico de Antioquia</strong>
+        </div>
+        <div style="text-align: right">
+          <small>Programa académico</small>
+          <strong>Ingeniería de software</strong>
+        </div>
+      </div>
+
+      <div class="cover-kicker">Evaluación final — 2026-2</div>
+      <h1>Unholy Store</h1>
+      <p class="subtitle">
+        Plataforma web de administración y comercio con consumo de API REST,
+        autenticación, carrito de compras y diseño responsivo.
+      </p>
+
+      <div class="meta-grid">
+        <div>
+          <span>Carrera</span>
+          <b>Ingeniería de software</b>
+        </div>
+        <div>
+          <span>Asignatura</span>
+          <b>Desarrollo Web</b>
+        </div>
+        <div>
+          <span>Docente</span>
+          <b>Yan Carlo Angarita</b>
+        </div>
+        <div>
+          <span>Ciudad y fecha</span>
+          <b>Los Patios, 20 de septiembre de 2026</b>
+        </div>
+      </div>
+
+      <h2>Integrantes del equipo</h2>
+      <div class="member">
+        <strong>Dumas Alejandro Restrepo Moreno</strong>
+        <a href="https://github.com/DumasRestrepo/parcial_desarrollo_web"
+          >https://github.com/DumasRestrepo/parcial_desarrollo_web</a
+        >
+      </div>
+      <div class="member">
+        <strong>Diego Andrés Sanabria Ascanio</strong>
+        <a href="https://github.com/Mort0/Parcial-desarrollo-web"
+          >https://github.com/Mort0/Parcial-desarrollo-web</a
+        >
+      </div>
+
+      <div class="cover-foot">
+        El código fuente evaluable corresponde a la aplicación Unholy Store,
+        desarrollada en React, TypeScript y Vite, con persistencia sobre Mock
+        API.
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>1. Descripción del proyecto</h2>
+      <p>
+        Unholy Store es una aplicación de una sola página (SPA) para una tienda
+        de moda urbana. El sistema combina un catálogo de productos con un
+        panel administrativo: permite gestionar el inventario, los clientes, las
+        órdenes y la información institucional, e incorpora un flujo de compra
+        para usuarios autenticados. La persistencia de datos se realiza contra
+        un Mock API REST, sin backend propio.
+      </p>
+      <p>
+        El trabajo parte de la entrega del parcial y completa el ciclo pedido
+        en la evaluación final: CRUD de todos los recursos, sesión con rutas
+        protegidas, carrito, creación persistente de órdenes y retroalimentación
+        visual al usuario.
+      </p>
+
+      <h2>2. Arquitectura</h2>
+      <p>
+        La solución sigue una arquitectura en capas en el frontend. La interfaz
+        no habla con la API de forma directa: cada recurso pasa por un
+        repositorio y un servicio HTTP único. El estado de sesión, carrito,
+        alertas e información institucional se comparte con Context API.
+      </p>
+
+      <div class="layers">
+        <div class="layer">
+          <b>Presentación</b>
+          <span
+            >Páginas React (catálogo, CRUDs, login, información), Layout,
+            Header, Footer y CartDrawer. Enrutamiento con React Router y
+            <i>basename</i> para despliegue en GitHub Pages.</span
+          >
+        </div>
+        <div class="layer">
+          <b>Estado de la aplicación</b>
+          <span
+            >AuthContext (login, registro, logout y rol), CartContext (ítems,
+            cantidades y persistencia local), AlertContext (toasts y
+            confirmaciones), InformationContext (misión, visión y contacto) y
+            ThemeContext (paletas).</span
+          >
+        </div>
+        <div class="layer">
+          <b>Acceso a datos</b>
+          <span
+            >Repositorios por recurso:
+            producto, categoria, usuario, cliente, orden, estado_orden e
+            information. Cada uno expone getAll, getById, create, update y
+            remove.</span
+          >
+        </div>
+        <div class="layer">
+          <b>Infraestructura</b>
+          <span
+            >api.service.ts encapsula fetch sobre
+            https://6aa6bdb0d7765db9850793a1.mockapi.io con métodos GET, POST,
+            PUT y DELETE.</span
+          >
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="box">
+          <h3>Stack</h3>
+          <ul>
+            <li>React 19 y TypeScript</li>
+            <li>Vite 8</li>
+            <li>React Router DOM 7</li>
+            <li>MockAPI como backend REST</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Seguridad de rutas</h3>
+          <ul>
+            <li>Públicas: /login y /register</li>
+            <li>El resto exige sesión activa</li>
+            <li>Sin sesión hay redirección a login</li>
+            <li>/usuarios queda restringido a rol admin</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="page">
+      <h2>3. Alcance implementado</h2>
+      <p>
+        El alcance cubre los cuatro bloques de la evaluación final. Lo
+        siguiente resume lo que el docente puede verificar en el código y en la
+        aplicación en ejecución.
+      </p>
+
+      <h3>Consolidación del parcial y CRUD</h3>
+      <p>
+        Existen vistas y operaciones de crear, listar, actualizar y eliminar
+        para productos, categorías, usuarios, clientes, órdenes, estados de
+        orden e información institucional. La página de información y el pie de
+        página cargan misión, visión, teléfono, dirección y horario desde el
+        endpoint <i>/information</i>.
+      </p>
+
+      <h3>Autenticación y sesión</h3>
+      <p>
+        El login valida nombre y clave contra el recurso <i>/usuario</i>. El
+        encabezado muestra el usuario activo y el botón Cerrar sesión. Las
+        vistas administrativas, el historial de pedidos y el checkout viven
+        detrás de ProtectedRoute.
+      </p>
+
+      <h3>Tienda, carrito y pedidos</h3>
+      <p>
+        El catálogo permite explorar productos y agregarlos al carrito,
+        modificar cantidades y quitar ítems. El carrito se guarda en
+        localStorage de forma opcional. Al finalizar la compra, el sistema
+        exige un usuario autenticado y envía un POST a <i>/orden</i> con
+        productos, cantidades, montos, fecha, estado inicial «Pendiente» y
+        referencia al comprador (nombre y usuarioId). Después se vacía el
+        carrito, se muestra un resumen y el pedido queda en el historial del
+        usuario.
+      </p>
+
+      <h3>Diseño responsivo y feedback</h3>
+      <p>
+        La interfaz se adapta a escritorio y móvil (menú hamburguesa, grillas y
+        pie de página). Hay toasts de éxito o error en login, operaciones CRUD,
+        alta al carrito y confirmación de la orden.
+      </p>
+
+      <h2>4. Repositorios personales de GitHub</h2>
+      <p>
+        Conforme al enunciado, cada integrante mantiene el código en un
+        repositorio personal. Los enlaces evaluables son:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Integrante</th>
+            <th>Enlace del repositorio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="repo-name">Dumas Alejandro Restrepo Moreno</td>
+            <td>
+              <a href="https://github.com/DumasRestrepo/parcial_desarrollo_web"
+                >https://github.com/DumasRestrepo/parcial_desarrollo_web</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td class="repo-name">Diego Andrés Sanabria Ascanio</td>
+            <td>
+              <a href="https://github.com/Mort0/Parcial-desarrollo-web"
+                >https://github.com/Mort0/Parcial-desarrollo-web</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">
+        El proyecto se desarrolló en el repositorio de Dumas Restrepo. Diego
+        Sanabria tiene el suyo con la misma versión del código, como pide la
+        evaluación a cada integrante.
+      </p>
+    </section>
+  </body>
+</html>

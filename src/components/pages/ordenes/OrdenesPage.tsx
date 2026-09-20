@@ -11,6 +11,7 @@ import type { Orden, EstadoOrden } from '../../../interfaces';
 // Repositories
 import { ordenRepository } from '../../../respositories/orden.repository';
 import { estadoOrdenRepository } from '../../../respositories/estadoOrden.repository';
+import { isOrderOwnedByUser } from '../../../utils/orderDetail';
 
 // Styles
 import '../pages.css';
@@ -28,7 +29,7 @@ const VACIO: Omit<Orden, 'id'> = {
 };
 
 export function OrdenesPage() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const { showToast, showConfirm } = useAlert();
   const [ordenes, setOrdenes] = useState<Orden[]>([]);
   const [estados, setEstados] = useState<EstadoOrden[]>([]);
@@ -101,11 +102,20 @@ export function OrdenesPage() {
     setEditandoId(null);
   }
 
+  const visibles =
+    isAdmin || !user
+      ? ordenes
+      : ordenes.filter((o) => isOrderOwnedByUser(o, user));
+
   return (
     <div className="page">
       <header className="page__header">
-        <h1>Órdenes</h1>
-        <p className="page__subtitle">Seguimiento y gestión de pedidos</p>
+        <h1>{isAdmin ? 'Órdenes' : 'Historial de pedidos'}</h1>
+        <p className="page__subtitle">
+          {isAdmin
+            ? 'Seguimiento y gestión de pedidos'
+            : 'Pedidos asociados a tu usuario autenticado'}
+        </p>
       </header>
 
       {/* Formulario */}
@@ -215,33 +225,36 @@ export function OrdenesPage() {
 
       {/* Listado */}
       <section className="card">
-        <h2 className="card__title">Listado ({ordenes.length})</h2>
+        <h2 className="card__title">Listado ({visibles.length})</h2>
 
         {cargando && <p className="muted">Cargando...</p>}
 
-        {!cargando && ordenes.length === 0 && (
+        {!cargando && visibles.length === 0 && (
           <div className="empty-state">
-            <span style={{ fontSize: '2.5rem' }}>🛒</span>
-            <p>No hay órdenes registradas.</p>
+            <p>
+              {isAdmin
+                ? 'No hay órdenes registradas.'
+                : 'Aún no tienes pedidos en tu historial.'}
+            </p>
           </div>
         )}
 
-        {ordenes.length > 0 && (
+        {visibles.length > 0 && (
           <div className="table-wrap">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Cliente</th>
+                  <th>Comprador</th>
                   <th>Fecha</th>
+                  <th>Detalle</th>
                   <th>Método pago</th>
                   <th>Total</th>
-                  <th>Descuento</th>
                   <th>Estado</th>
-                  <th>Acciones</th>
+                  {isAdmin && <th>Acciones</th>}
                 </tr>
               </thead>
               <tbody>
-                {ordenes.map((o) => {
+                {visibles.map((o) => {
                   const estadoInfo = estados.find(
                     (e) =>
                       e.nombre.toLowerCase() ===
@@ -256,11 +269,11 @@ export function OrdenesPage() {
                         <strong>{o.cliente}</strong>
                       </td>
                       <td>{o.fecha}</td>
+                      <td className="table__detail">{o.detalle || '—'}</td>
                       <td>
                         {o.metodo_pago || <span className="muted">—</span>}
                       </td>
                       <td>${Number(o.total).toFixed(2)}</td>
-                      <td>${Number(o.descuento).toFixed(2)}</td>
                       <td>
                         {o.estado_orden ? (
                           <span
@@ -277,8 +290,8 @@ export function OrdenesPage() {
                           <span className="muted">—</span>
                         )}
                       </td>
-                      <td className="table__actions">
-                        {isAdmin && (
+                      {isAdmin && (
+                        <td className="table__actions">
                           <>
                             <button
                               className="btn btn--sm"
@@ -293,8 +306,8 @@ export function OrdenesPage() {
                               Eliminar
                             </button>
                           </>
-                        )}
-                      </td>
+                        </td>
+                      )}
                     </tr>
                   );
                 })}

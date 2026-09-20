@@ -4,4 +4,6 @@ export interface Information {
   telefono: string;
   direccion: string;
   horario: string;
+  mision: string;
+  vision: string;
 }

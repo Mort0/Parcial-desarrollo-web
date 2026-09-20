@@ -15,7 +15,7 @@ const links = [
   { to: '/categorias', label: 'Categorías', end: false },
   { to: '/usuarios', label: 'Usuarios', end: false },
   { to: '/clientes', label: 'Clientes', end: false },
-  { to: '/ordenes', label: 'Órdenes', end: false },
+  { to: '/ordenes', label: 'Pedidos', end: false },
   { to: '/estados-orden', label: 'Estados de Orden', end: false },
   { to: '/informacion', label: 'Información', end: false },
 ];
@@ -172,60 +172,20 @@ export function Header() {
             <ThemeDropdown />
             <div className="app-header__divider" />
 
-            <div
-              className="app-header__user-info"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
-            >
-              <span
-                className="app-header__greeting"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  gap: '2px',
-                }}
-              >
-                <span
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                  }}
-                >
-                  <span>Hola, {user?.nombre || 'admin'}</span>
-                  {isAdmin && (
-                    <span
-                      style={{
-                        fontSize: '0.6rem',
-                        background: 'var(--color-primary)',
-                        color: 'var(--color-surface)',
-                        padding: '2px 4px',
-                        borderRadius: '4px',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      ADMIN
-                    </span>
-                  )}
+            <div className="app-header__user-info">
+              <div className="app-header__session">
+                <span className="app-header__username">
+                  {user?.nombre || 'Invitado'}
                 </span>
+                {isAdmin && <span className="app-header__role">ADMIN</span>}
                 <button
+                  type="button"
+                  className="app-header__logout"
                   onClick={logout}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'rgba(255,255,255,0.5)',
-                    fontSize: '0.7rem',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = '#ff5a5f')}
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')
-                  }
                 >
                   Cerrar sesión
                 </button>
-              </span>
+              </div>
               <div className="app-header__avatar">
                 {user?.nombre ? user.nombre.charAt(0).toUpperCase() : 'A'}
               </div>
@@ -261,7 +221,7 @@ export function Header() {
                   `app-navbar__link${isActive ? ' app-navbar__link--active' : ''}`
                 }
               >
-                {l.label}
+                {l.to === '/ordenes' && !isAdmin ? 'Mis pedidos' : l.label}
               </NavLink>
             ))}
         </div>

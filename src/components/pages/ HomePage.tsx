@@ -13,6 +13,7 @@ import { clienteRepository } from '../../respositories/cliente.repository';
 // Utils
 import { getProductFallbackImage } from '../../utils/productImage';
 import { useCart } from '../../context/CartContext';
+import { useAlert } from '../../context/AlertContext';
 
 // Styles
 import './pages.css';
@@ -34,6 +35,7 @@ export function HomePage() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [cargando, setCargando] = useState(true);
   const { addToCart } = useCart();
+  const { showToast } = useAlert();
 
   useEffect(() => {
     async function cargar() {
@@ -185,7 +187,13 @@ export function HomePage() {
                                 padding: '0.4rem 0.8rem',
                                 fontSize: '0.85rem',
                               }}
-                              onClick={() => addToCart(p)}
+                              onClick={() => {
+                                addToCart(p);
+                                showToast(
+                                  `${p.nombre} añadido al carrito`,
+                                  'success',
+                                );
+                              }}
                             >
                               + Añadir
                             </button>
